@@ -8,9 +8,11 @@ This module is for the C++ Sleuth Kit Framework.
 
 DESCRIPTION
 
-What does it do?
+This module is a file analysis module that performs an 
+entropy calculation for the contents of a given file. The
+result of the calculation is written to the blackboard.
 
 USAGE
 
-Fill in about arguments, config etc.
+Configure the file analysis pipeline to include this module.
 

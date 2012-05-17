@@ -10,9 +10,12 @@
 
 /**
  * \file EntropyModule.cpp
- * Contains the implementation for the Entropy file analysis module.
+ * Contains the implementation of the Entropy file analysis module.
+ * The module performs an entropy calculation for the contents of a given file. 
+ * The result of the calculation is written to the blackboard.
  */
 
+// System includes
 #include <sstream>
 #include <math.h>
 
@@ -25,20 +28,29 @@ static const uint32_t FILE_BUFFER_SIZE = 8193;
 extern "C" 
 {
     /**
-     * Module initialization function. Takes a string as input that allows
-     * arguments to be passed into the module.
-     * @param arguments This module takes no arguments
+     * Module initialization function. Receives a string of intialization arguments, 
+     * typically read by the caller from a pipeline configuration file. 
+     * Returns TskModule::OK or TskModule::FAIL. Returning TskModule::FAIL indicates 
+     * the module is not in an operational state.  
+     *
+     * @param args Initialization arguments.
+     * @return TskModule::OK if initialization succeeded, otherwise TskModule::FAIL.
      */
     TskModule::Status TSK_MODULE_EXPORT initialize(std::string& arguments)
     {    
         return TskModule::OK;
     }
-        /**
-     * The run() method is where the modules work is performed.
-     * The module will be passed a pointer to a file from which both
-     * content and metadata can be retrieved.
+    
+    /**
+     * Module execution function. Receives a pointer to a file the module is to
+     * process. The file is represented by a TskFile interface from which both
+     * file content and file metadata can be retrieved. Returns TskModule::OK, 
+     * TskModule::FAIL, or TskModule::STOP. Returning TskModule::FAIL indicates 
+     * the module experienced an error processing the file. Returning TskModule::STOP
+     * is a request to terminate processing of the file.
+     *
      * @param pFile A pointer to a file to be processed.
-     * @returns TskModule::OK on success and TskModule::FAIL on error.
+     * @returns TskModule::OK on success, TskModule::FAIL on error, or TskModule::STOP.
      */
     TskModule::Status TSK_MODULE_EXPORT run(TskFile * pFile)
     {
@@ -77,9 +89,7 @@ extern "C"
             }
 
             // Post the value to the blackboard
-            TskBlackboard& blackboard = TskServices::Instance().getBlackboard();
-            
-            pFile->addGenInfoAttribute(TskBlackboardAttribute(TSK_ENTROPY, "EntropyModule", "Entropy", entropy));
+            pFile->addGenInfoAttribute(TskBlackboardAttribute(TSK_ENTROPY, "EntropyModule", "", entropy));
         }
         catch (TskException& tskEx)
         {
@@ -98,6 +108,12 @@ extern "C"
         return TskModule::OK;
     }
 
+    /**
+     * Module cleanup function. This is where the module should free any resources 
+     * allocated during initialization or execution.
+     *
+     * @returns TskModule::OK on success and TskModule::FAIL on error.
+     */
     TskModule::Status TSK_MODULE_EXPORT finalize()
     {
         return TskModule::OK;

@@ -11,6 +11,8 @@
 /**
  * \file EntropyModule.cpp
  * Contains the implementation of the Entropy file analysis module.
+ * The module performs an entropy calculation for the contents of a given file. 
+ * The result of the calculation is written to the blackboard.
  */
 
 // System includes
@@ -48,7 +50,7 @@ extern "C"
      * is a request to terminate processing of the file.
      *
      * @param pFile A pointer to a file to be processed.
-     * @returns TskModule::OK on success and TskModule::FAIL on error.
+     * @returns TskModule::OK on success, TskModule::FAIL on error, or TskModule::STOP.
      */
     TskModule::Status TSK_MODULE_EXPORT run(TskFile * pFile)
     {

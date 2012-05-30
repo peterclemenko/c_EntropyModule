@@ -11,18 +11,6 @@
 /**
  * \file EntropyModule.cpp
  * Contains the implementation of the Entropy file analysis module.
- *
- * MODULE DESCRIPTION
- * 
- * This module is a file analysis module that performs an entropy calculation 
- * for the contents of a given file. The result of the calculation is written to 
- * the blackboard.
- * 
- * MODULE USAGE
- * 
- * Configure the file analysis pipeline to include this module by adding a 
- * "MODULE" element to the pipeline configuration file. The "MODULE" element
- * does not require an "arguments" attribute.
  */
 
 // System includes
@@ -37,6 +25,45 @@ static const uint32_t FILE_BUFFER_SIZE = 8193;
 
 extern "C" 
 {
+    #ifdef _MSC_VER
+        #pragma warning( push )
+        #pragma warning( disable: 4190 )
+    #endif
+ 
+    /**
+     * Module identification function. 
+     *
+     * @return The name of the module as a std::string.
+     */
+    std::string name()
+    {
+        return "Entropy";
+    }
+
+    /**
+     * Module identification function. 
+     *
+     * @return A description of the module as a std::string.
+     */
+    std::string description()
+    {
+        return "";
+    }
+
+    /**
+     * Module identification function. 
+     *
+     * @return The version of the module as a std::string.
+     */
+    std::string version()
+    {
+        return "0.0.0";
+    }
+
+    #ifdef _MSC_VER
+        #pragma warning( pop )
+    #endif
+
     /**
      * Module initialization function. This module does not require 
      * initialization arguments. 

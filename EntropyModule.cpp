@@ -11,18 +11,6 @@
 /**
  * \file EntropyModule.cpp
  * Contains the implementation of the Entropy file analysis module.
- *
- * MODULE DESCRIPTION
- * 
- * This module is a file analysis module that performs an entropy calculation 
- * for the contents of a given file. The result of the calculation is written to 
- * the blackboard.
- * 
- * MODULE USAGE
- * 
- * Configure the file analysis pipeline to include this module by adding a 
- * "MODULE" element to the pipeline configuration file. The "MODULE" element
- * does not require an "arguments" attribute.
  */
 
 // System includes
@@ -38,13 +26,43 @@ static const uint32_t FILE_BUFFER_SIZE = 8193;
 extern "C" 
 {
     /**
+     * Module identification function. 
+     *
+     * @return The name of the module as a std::string.
+     */
+    const char* name()
+    {
+        return "Entropy";
+    }
+
+    /**
+     * Module identification function. 
+     *
+     * @return A description of the module as a std::string.
+     */
+    const char* description()
+    {
+        return "";
+    }
+
+    /**
+     * Module identification function. 
+     *
+     * @return The version of the module as a std::string.
+     */
+    const char* version()
+    {
+        return "0.0.0";
+    }
+
+    /**
      * Module initialization function. This module does not require 
      * initialization arguments. 
      *
      * @param args Initialization arguments, can pass empty string.
      * @return TskModule::OK
      */
-    TskModule::Status TSK_MODULE_EXPORT initialize(std::string& arguments)
+    TskModule::Status TSK_MODULE_EXPORT initialize(const char* arguments)
     {    
         return TskModule::OK;
     }
@@ -111,6 +129,7 @@ extern "C"
             LOGERROR(msg.str());
             return TskModule::FAIL;
         }
+
         return TskModule::OK;
     }
 

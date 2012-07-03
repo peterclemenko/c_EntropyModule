@@ -42,7 +42,7 @@ extern "C"
      */
     TSK_MODULE_EXPORT const char *description()
     {
-        return "";
+        return "Performs an entropy calculation for the contents of a given file";
     }
 
     /**

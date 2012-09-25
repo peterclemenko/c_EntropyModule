@@ -57,7 +57,7 @@
 // using the "static" keyword.
 namespace
 {
-	const uint32_t FILE_BUFFER_SIZE = 8193;
+    const uint32_t FILE_BUFFER_SIZE = 8193;
 
     double calculateEntropy(TskFile *pFile)
     {
@@ -138,17 +138,17 @@ extern "C"
      */
     TskModule::Status TSK_MODULE_EXPORT initialize(const char* arguments)
     {    
-		// The TSK Framework convention is to prefix error messages with the
-		// name of the module/class and function that emitted the message. 
+        // The TSK Framework convention is to prefix error messages with the
+        // name of the module/class and function that emitted the message. 
         const std::string MSG_PREFIX = "EntropyModule::initialize : ";
 
-		// Well-behaved modules should catch and log all possible exceptions
-		// and return an appropriate TskModule::Status to the TSK Framework. 
-		TskModule::Status status = TskModule::OK;
+        // Well-behaved modules should catch and log all possible exceptions
+        // and return an appropriate TskModule::Status to the TSK Framework. 
+        TskModule::Status status = TskModule::OK;
         try
         {
-			// If this module required initialization, the initialization code would
-			// go here.
+            // If this module required initialization, the initialization code would
+            // go here.
         }
         catch (TskException &ex)
         {
@@ -204,6 +204,11 @@ extern "C"
 		TskModule::Status status = TskModule::OK;
         try
         {
+           if (pFile == NULL) 
+           {
+               throw TskException("passed NULL TskFile pointer");
+           }
+
             // Calculate an entropy value for the file.
             double entropy = calculateEntropy(pFile);
 
@@ -218,8 +223,8 @@ extern "C"
             msg << MSG_PREFIX << "TskException: " << ex.message();
             LOGERROR(msg.str());
         }
-		// Uncomment this catch block and the #include of "Poco/Exception.h" if using
-		// Poco.
+        // Uncomment this catch block and the #include of "Poco/Exception.h" if using
+        // Poco.
         //catch (Poco::Exception &ex)
         //{
         //    status = TskModule::FAIL;
@@ -270,8 +275,8 @@ extern "C"
             msg << MSG_PREFIX << "TskException: " << ex.message();
             LOGERROR(msg.str());
         }
-		// Uncomment this catch block and the #include of "Poco/Exception.h" if using
-		// Poco.
+        // Uncomment this catch block and the #include of "Poco/Exception.h" if using
+        // Poco.
         //catch (Poco::Exception &ex)
         //{
         //    status = TskModule::FAIL;

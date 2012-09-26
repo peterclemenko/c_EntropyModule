@@ -140,7 +140,8 @@ extern "C"
     {    
         // The TSK Framework convention is to prefix error messages with the
         // name of the module/class and function that emitted the message. 
-        const std::string MSG_PREFIX = "EntropyModule::initialize : ";
+        std::ostringstream msgPrefix;
+        msgPrefix << name() << "::initialize : ";
 
         // Well-behaved modules should catch and log all possible exceptions
         // and return an appropriate TskModule::Status to the TSK Framework. 
@@ -154,7 +155,7 @@ extern "C"
         {
             status = TskModule::FAIL;
             std::ostringstream msg;
-            msg << MSG_PREFIX << "TskException: " << ex.message();
+            msg << msgPrefix.str() << "TskException: " << ex.message();
             LOGERROR(msg.str());
         }
         // Uncomment this catch block and the #include of "Poco/Exception.h" if using
@@ -163,20 +164,20 @@ extern "C"
         //{
         //    status = TskModule::FAIL;
         //    std::ostringstream msg;
-        //    msg << MSG_PREFIX << "Poco::Exception: " << ex.displayText();
+        //    msg << msgPrefix.str() << "Poco::Exception: " << ex.displayText();
         //    LOGERROR(msg.str());
         //}
         catch (std::exception &ex)
         {
             status = TskModule::FAIL;
             std::ostringstream msg;
-            msg << MSG_PREFIX << "std::exception: " << ex.what();
+            msg << msgPrefix.str() << "std::exception: " << ex.what();
             LOGERROR(msg.str());
         }
         catch (...)
         {
             status = TskModule::FAIL;
-            LOGERROR(MSG_PREFIX + "unrecognized exception");
+            LOGERROR(msgPrefix.str() + "unrecognized exception");
         }
 
         return status;
@@ -197,7 +198,8 @@ extern "C"
     {
 		// The TSK Framework convention is to prefix error messages with the
 		// name of the module/class and function that emitted the message. 
-        const std::string MSG_PREFIX = "EntropyModule::run : ";
+        std::ostringstream msgPrefix;
+        msgPrefix << name() << "::run : ";
 
 		// Well-behaved modules should catch and log all possible exceptions
 		// and return an appropriate TskModule::Status to the TSK Framework. 
@@ -213,14 +215,14 @@ extern "C"
             double entropy = calculateEntropy(pFile);
 
             // Post the value to the blackboard.
-            pFile->addGenInfoAttribute(TskBlackboardAttribute(TSK_ENTROPY, "EntropyModule", "", entropy));
+            pFile->addGenInfoAttribute(TskBlackboardAttribute(TSK_ENTROPY, name(), "", entropy));
 
         }
         catch (TskException &ex)
         {
             status = TskModule::FAIL;
             std::ostringstream msg;
-            msg << MSG_PREFIX << "TskException: " << ex.message();
+            msg << msgPrefix.str() << "TskException: " << ex.message();
             LOGERROR(msg.str());
         }
         // Uncomment this catch block and the #include of "Poco/Exception.h" if using
@@ -229,20 +231,20 @@ extern "C"
         //{
         //    status = TskModule::FAIL;
         //    std::ostringstream msg;
-        //    msg << MSG_PREFIX << "Poco::Exception: " << ex.displayText();
+        //    msg << msgPrefix.str() << "Poco::Exception: " << ex.displayText();
         //    LOGERROR(msg.str());
         //}
         catch (std::exception &ex)
         {
             status = TskModule::FAIL;
             std::ostringstream msg;
-            msg << MSG_PREFIX << "std::exception: " << ex.what();
+            msg << msgPrefix.str() << "std::exception: " << ex.what();
             LOGERROR(msg.str());
         }
         catch (...)
         {
             status = TskModule::FAIL;
-            LOGERROR(MSG_PREFIX + "unrecognized exception");
+            LOGERROR(msgPrefix.str() + "unrecognized exception");
         }
 
         return status;
@@ -258,7 +260,8 @@ extern "C"
     {
 		// The TSK Framework convention is to prefix error messages with the
 		// name of the module/class and function that emitted the message. 
-        const std::string MSG_PREFIX = "EntropyModule::finalize : ";
+        std::ostringstream msgPrefix;
+        msgPrefix << name() << "::finalize : ";
 
 		// Well-behaved modules should catch and log all possible exceptions
 		// and return an appropriate TskModule::Status to the TSK Framework. 
@@ -272,7 +275,7 @@ extern "C"
         {
             status = TskModule::FAIL;
             std::ostringstream msg;
-            msg << MSG_PREFIX << "TskException: " << ex.message();
+            msg << msgPrefix.str() << "TskException: " << ex.message();
             LOGERROR(msg.str());
         }
         // Uncomment this catch block and the #include of "Poco/Exception.h" if using
@@ -281,20 +284,20 @@ extern "C"
         //{
         //    status = TskModule::FAIL;
         //    std::ostringstream msg;
-        //    msg << MSG_PREFIX << "Poco::Exception: " << ex.displayText();
+        //    msg << msgPrefix.str() << "Poco::Exception: " << ex.displayText();
         //    LOGERROR(msg.str());
         //}
         catch (std::exception &ex)
         {
             status = TskModule::FAIL;
             std::ostringstream msg;
-            msg << MSG_PREFIX << "std::exception: " << ex.what();
+            msg << msgPrefix.str() << "std::exception: " << ex.what();
             LOGERROR(msg.str());
         }
         catch (...)
         {
             status = TskModule::FAIL;
-            LOGERROR(MSG_PREFIX + "unrecognized exception");
+            LOGERROR(msgPrefix.str() + "unrecognized exception");
         }
 
         return status;

@@ -203,7 +203,7 @@ extern "C"
 
         // Well-behaved modules should catch and log all possible exceptions
         // and return an appropriate TskModule::Status to the TSK Framework. 
-		TskModule::Status status = TskModule::OK;
+        TskModule::Status status = TskModule::OK;
         try
         {
             if (pFile == NULL) 

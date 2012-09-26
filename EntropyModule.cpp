@@ -104,7 +104,7 @@ extern "C"
      */
     TSK_MODULE_EXPORT const char *name()
     {
-        return "EntropyModule";
+        return "Entropy";
     }
 
     /**

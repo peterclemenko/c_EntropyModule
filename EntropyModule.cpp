@@ -196,27 +196,26 @@ extern "C"
      */
     TskModule::Status TSK_MODULE_EXPORT run(TskFile *pFile)
     {
-		// The TSK Framework convention is to prefix error messages with the
-		// name of the module/class and function that emitted the message. 
+        // The TSK Framework convention is to prefix error messages with the
+        // name of the module/class and function that emitted the message. 
         std::ostringstream msgPrefix;
         msgPrefix << name() << "::run : ";
 
-		// Well-behaved modules should catch and log all possible exceptions
-		// and return an appropriate TskModule::Status to the TSK Framework. 
+        // Well-behaved modules should catch and log all possible exceptions
+        // and return an appropriate TskModule::Status to the TSK Framework. 
 		TskModule::Status status = TskModule::OK;
         try
         {
-           if (pFile == NULL) 
-           {
-               throw TskException("passed NULL TskFile pointer");
-           }
+            if (pFile == NULL) 
+            {
+                throw TskException("passed NULL TskFile pointer");
+            }
 
             // Calculate an entropy value for the file.
             double entropy = calculateEntropy(pFile);
 
             // Post the value to the blackboard.
             pFile->addGenInfoAttribute(TskBlackboardAttribute(TSK_ENTROPY, name(), "", entropy));
-
         }
         catch (TskException &ex)
         {
@@ -258,18 +257,18 @@ extern "C"
      */
     TskModule::Status TSK_MODULE_EXPORT finalize()
     {
-		// The TSK Framework convention is to prefix error messages with the
-		// name of the module/class and function that emitted the message. 
+        // The TSK Framework convention is to prefix error messages with the
+        // name of the module/class and function that emitted the message. 
         std::ostringstream msgPrefix;
         msgPrefix << name() << "::finalize : ";
 
-		// Well-behaved modules should catch and log all possible exceptions
-		// and return an appropriate TskModule::Status to the TSK Framework. 
-		TskModule::Status status = TskModule::OK;
+        // Well-behaved modules should catch and log all possible exceptions
+        // and return an appropriate TskModule::Status to the TSK Framework. 
+        TskModule::Status status = TskModule::OK;
         try
         {
-			// If this module required finalization, the finalization code would
-			// go here.
+            // If this module required finalization, the finalization code would
+            // go here.
         }
         catch (TskException &ex)
         {

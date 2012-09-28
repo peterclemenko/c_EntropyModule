@@ -57,6 +57,10 @@
 // using the "static" keyword.
 namespace
 {
+    const char *MODULE_NAME = "Entropy";
+    const char *MODULE_DESCRIPTION = "Performs an entropy calculation for the contents of a given file";
+    const char *MODULE_VERSION = "1.0.0";
+    
     const uint32_t FILE_BUFFER_SIZE = 8193;
 
     double calculateEntropy(TskFile *pFile)
@@ -104,7 +108,7 @@ extern "C"
      */
     TSK_MODULE_EXPORT const char *name()
     {
-        return "Entropy";
+        return MODULE_NAME;
     }
 
     /**
@@ -114,7 +118,7 @@ extern "C"
      */
     TSK_MODULE_EXPORT const char *description()
     {
-        return "Performs an entropy calculation for the contents of a given file";
+        return MODULE_DESCRIPTION;
     }
 
     /**
@@ -124,7 +128,7 @@ extern "C"
      */
     TSK_MODULE_EXPORT const char *version()
     {
-        return "1.0.0";
+        return MODULE_VERSION;
     }
 
     /**

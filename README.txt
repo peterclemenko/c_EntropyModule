@@ -13,6 +13,9 @@ entropy calculation for the contents of a given file. Entropy
 shows how random the file is and can be used to detect 
 encrypted or compressed files.
 
+DEPLOYMENT REQUIREMENTS
+
+This module does not have any specific deployment requirements.
 
 USAGE
 

@@ -162,8 +162,7 @@ extern "C"
             msg << msgPrefix.str() << "TskException: " << ex.message();
             LOGERROR(msg.str());
         }
-        // Uncomment this catch block and the #include of "Poco/Exception.h" if using
-        // Poco.
+        // Uncomment this catch block and the #include of "Poco/Exception.h" if using Poco.
         //catch (Poco::Exception &ex)
         //{
         //    status = TskModule::FAIL;
@@ -178,6 +177,14 @@ extern "C"
             msg << msgPrefix.str() << "std::exception: " << ex.what();
             LOGERROR(msg.str());
         }
+        // Uncomment this catch block and add necessary .NET references if using C++/CLI.
+        //catch (System::Exception ^ex)
+        //{
+        //    status = TskModule::FAIL;
+        //    std::ostringstream msg;
+        //    msg << msgPrefix.str() << "System::Exception: " << Maytag::systemStringToStdString(ex->Message);
+        //    LOGERROR(msg.str());
+        //}        
         catch (...)
         {
             status = TskModule::FAIL;
@@ -228,8 +235,7 @@ extern "C"
             msg << msgPrefix.str() << "TskException: " << ex.message();
             LOGERROR(msg.str());
         }
-        // Uncomment this catch block and the #include of "Poco/Exception.h" if using
-        // Poco.
+        // Uncomment this catch block and the #include of "Poco/Exception.h" if using Poco.
         //catch (Poco::Exception &ex)
         //{
         //    status = TskModule::FAIL;
@@ -244,6 +250,14 @@ extern "C"
             msg << msgPrefix.str() << "std::exception: " << ex.what();
             LOGERROR(msg.str());
         }
+        // Uncomment this catch block and add necessary .NET references if using C++/CLI.
+        //catch (System::Exception ^ex)
+        //{
+        //    status = TskModule::FAIL;
+        //    std::ostringstream msg;
+        //    msg << msgPrefix.str() << "System::Exception: " << Maytag::systemStringToStdString(ex->Message);
+        //    LOGERROR(msg.str());
+        //}        
         catch (...)
         {
             status = TskModule::FAIL;
@@ -281,8 +295,7 @@ extern "C"
             msg << msgPrefix.str() << "TskException: " << ex.message();
             LOGERROR(msg.str());
         }
-        // Uncomment this catch block and the #include of "Poco/Exception.h" if using
-        // Poco.
+        // Uncomment this catch block and the #include of "Poco/Exception.h" if using Poco.
         //catch (Poco::Exception &ex)
         //{
         //    status = TskModule::FAIL;
@@ -297,6 +310,14 @@ extern "C"
             msg << msgPrefix.str() << "std::exception: " << ex.what();
             LOGERROR(msg.str());
         }
+        // Uncomment this catch block and add necessary .NET references if using C++/CLI.
+        //catch (System::Exception ^ex)
+        //{
+        //    status = TskModule::FAIL;
+        //    std::ostringstream msg;
+        //    msg << msgPrefix.str() << "System::Exception: " << Maytag::systemStringToStdString(ex->Message);
+        //    LOGERROR(msg.str());
+        //}        
         catch (...)
         {
             status = TskModule::FAIL;

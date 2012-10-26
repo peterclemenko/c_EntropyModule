@@ -43,55 +43,65 @@
 #include "TskModuleDev.h"
 
 // Poco includes
-// Uncomment this include if using Poco.
+// Uncomment this include if using the Poco catch blocks.
 //#include "Poco/Exception.h"
 
 // C/C++ library includes
 #include <string>
 #include <sstream>
 #include <math.h>
+#include <assert.h>
 
 // Functions and variables other than the module API functions are enclosed in
 // an anonymous namespace to give them file scope instead of global scope. This
 // replaces the older practice of declaring file scope functions and variables
 // using the "static" keyword.
+//
+// More complex modules will likely put additional code in separate source files and
+// may define various classes to perform the work of the module. 
+//
+// Note that static data is not likely to be compatible with multithreading, since 
+// each thread will get its own copy of the data.
 namespace
 {
-    const char *MODULE_NAME = "Entropy";
-    const char *MODULE_DESCRIPTION = "Performs an entropy calculation for the contents of a given file";
-    const char *MODULE_VERSION = "1.0.0";
-    
-    const uint32_t FILE_BUFFER_SIZE = 8193;
-
+    /**
+     * Calculates the entropy of a file.
+     *
+     * @param pFile A TskFile object corrersponding to a file.
+     * @return The entropy of the file.
+     */
     double calculateEntropy(TskFile *pFile)
     {
+        const uint32_t FILE_BUFFER_SIZE = 8193;
+
         unsigned __int8 byte = 0;
         long byteCounts[256];
         memset(byteCounts, 0, sizeof(long) * 256);
         long totalBytes = 0;
         char buffer[FILE_BUFFER_SIZE];
         int bytesRead = 0;
-
         do
         {
             memset(buffer, 0, FILE_BUFFER_SIZE);
             bytesRead = pFile->read(buffer, FILE_BUFFER_SIZE);
+
             for(int i = 0; i < bytesRead; ++i)
             {
                 byte = buffer[i];
                 byteCounts[byte]++;
             }
+
             totalBytes += bytesRead;
         } 
         while (bytesRead > 0);
 
         double entropy = 0.0;
-        for(int i = 0; i<256; ++i)
+        for (int i = 0; i<256; ++i)
         {
             double p = static_cast<double>(byteCounts[i]) / static_cast<double>(totalBytes);
-            if(p > 0.0)
+            if (p > 0.0)
             {
-                entropy -= p *(log(p)/log(2.0));
+                entropy -= p * (log(p) / log(2.0));
             }
         }
 
@@ -108,7 +118,7 @@ extern "C"
      */
     TSK_MODULE_EXPORT const char *name()
     {
-        return MODULE_NAME;
+        return "Entropy";
     }
 
     /**
@@ -118,7 +128,7 @@ extern "C"
      */
     TSK_MODULE_EXPORT const char *description()
     {
-        return MODULE_DESCRIPTION;
+        return "Performs an entropy calculation for the contents of a given file";
     }
 
     /**
@@ -128,7 +138,7 @@ extern "C"
      */
     TSK_MODULE_EXPORT const char *version()
     {
-        return MODULE_VERSION;
+        return "1.0.0";
     }
 
     /**
@@ -143,55 +153,54 @@ extern "C"
     TskModule::Status TSK_MODULE_EXPORT initialize(const char* arguments)
     {    
         // The TSK Framework convention is to prefix error messages with the
-        // name of the module/class and function that emitted the message. 
+        // name of the module/class and the function that emitted the message. 
         std::ostringstream msgPrefix;
         msgPrefix << name() << "::initialize : ";
 
         // Well-behaved modules should catch and log all possible exceptions
         // and return an appropriate TskModule::Status to the TSK Framework. 
-        TskModule::Status status = TskModule::OK;
         try
         {
             // If this module required initialization, the initialization code would
             // go here.
+
+            return TskModule::OK;
         }
         catch (TskException &ex)
         {
-            status = TskModule::FAIL;
             std::ostringstream msg;
             msg << msgPrefix.str() << "TskException: " << ex.message();
             LOGERROR(msg.str());
+            return TskModule::FAIL;
         }
         // Uncomment this catch block and the #include of "Poco/Exception.h" if using Poco.
         //catch (Poco::Exception &ex)
         //{
-        //    status = TskModule::FAIL;
         //    std::ostringstream msg;
         //    msg << msgPrefix.str() << "Poco::Exception: " << ex.displayText();
         //    LOGERROR(msg.str());
+        //    return TskModule::FAIL;
         //}
         catch (std::exception &ex)
         {
-            status = TskModule::FAIL;
             std::ostringstream msg;
             msg << msgPrefix.str() << "std::exception: " << ex.what();
             LOGERROR(msg.str());
+            return TskModule::FAIL;
         }
         // Uncomment this catch block and add necessary .NET references if using C++/CLI.
         //catch (System::Exception ^ex)
         //{
-        //    status = TskModule::FAIL;
         //    std::ostringstream msg;
         //    msg << msgPrefix.str() << "System::Exception: " << Maytag::systemStringToStdString(ex->Message);
         //    LOGERROR(msg.str());
+        //    return TskModule::FAIL;
         //}        
         catch (...)
         {
-            status = TskModule::FAIL;
             LOGERROR(msgPrefix.str() + "unrecognized exception");
+            return TskModule::FAIL;
         }
-
-        return status;
     }
 
     /**
@@ -208,15 +217,15 @@ extern "C"
     TskModule::Status TSK_MODULE_EXPORT run(TskFile *pFile)
     {
         // The TSK Framework convention is to prefix error messages with the
-        // name of the module/class and function that emitted the message. 
+        // name of the module/class and the function that emitted the message. 
         std::ostringstream msgPrefix;
         msgPrefix << name() << "::run : ";
 
         // Well-behaved modules should catch and log all possible exceptions
         // and return an appropriate TskModule::Status to the TSK Framework. 
-        TskModule::Status status = TskModule::OK;
         try
         {
+            assert(pFile != NULL);
             if (pFile == NULL) 
             {
                 throw TskException("passed NULL TskFile pointer");
@@ -227,44 +236,44 @@ extern "C"
 
             // Post the value to the blackboard.
             pFile->addGenInfoAttribute(TskBlackboardAttribute(TSK_ENTROPY, name(), "", entropy));
+
+            return TskModule::OK;
         }
         catch (TskException &ex)
         {
-            status = TskModule::FAIL;
             std::ostringstream msg;
             msg << msgPrefix.str() << "TskException: " << ex.message();
             LOGERROR(msg.str());
+            return TskModule::FAIL;
         }
         // Uncomment this catch block and the #include of "Poco/Exception.h" if using Poco.
         //catch (Poco::Exception &ex)
         //{
-        //    status = TskModule::FAIL;
         //    std::ostringstream msg;
         //    msg << msgPrefix.str() << "Poco::Exception: " << ex.displayText();
         //    LOGERROR(msg.str());
+        //    return TskModule::FAIL;
         //}
         catch (std::exception &ex)
         {
-            status = TskModule::FAIL;
             std::ostringstream msg;
             msg << msgPrefix.str() << "std::exception: " << ex.what();
             LOGERROR(msg.str());
+            return TskModule::FAIL;
         }
         // Uncomment this catch block and add necessary .NET references if using C++/CLI.
         //catch (System::Exception ^ex)
         //{
-        //    status = TskModule::FAIL;
         //    std::ostringstream msg;
         //    msg << msgPrefix.str() << "System::Exception: " << Maytag::systemStringToStdString(ex->Message);
         //    LOGERROR(msg.str());
+        //    return TskModule::FAIL;
         //}        
         catch (...)
         {
-            status = TskModule::FAIL;
             LOGERROR(msgPrefix.str() + "unrecognized exception");
+            return TskModule::FAIL;
         }
-
-        return status;
     }
 
     /**
@@ -276,54 +285,53 @@ extern "C"
     TskModule::Status TSK_MODULE_EXPORT finalize()
     {
         // The TSK Framework convention is to prefix error messages with the
-        // name of the module/class and function that emitted the message. 
+        // name of the module/class and the function that emitted the message. 
         std::ostringstream msgPrefix;
         msgPrefix << name() << "::finalize : ";
 
         // Well-behaved modules should catch and log all possible exceptions
         // and return an appropriate TskModule::Status to the TSK Framework. 
-        TskModule::Status status = TskModule::OK;
         try
         {
             // If this module required finalization, the finalization code would
             // go here.
+
+            return TskModule::OK;
         }
         catch (TskException &ex)
         {
-            status = TskModule::FAIL;
             std::ostringstream msg;
             msg << msgPrefix.str() << "TskException: " << ex.message();
             LOGERROR(msg.str());
+            return TskModule::FAIL;
         }
         // Uncomment this catch block and the #include of "Poco/Exception.h" if using Poco.
         //catch (Poco::Exception &ex)
         //{
-        //    status = TskModule::FAIL;
         //    std::ostringstream msg;
         //    msg << msgPrefix.str() << "Poco::Exception: " << ex.displayText();
         //    LOGERROR(msg.str());
+        //    return TskModule::FAIL;
         //}
         catch (std::exception &ex)
         {
-            status = TskModule::FAIL;
             std::ostringstream msg;
             msg << msgPrefix.str() << "std::exception: " << ex.what();
             LOGERROR(msg.str());
+            return TskModule::FAIL;
         }
         // Uncomment this catch block and add necessary .NET references if using C++/CLI.
         //catch (System::Exception ^ex)
         //{
-        //    status = TskModule::FAIL;
         //    std::ostringstream msg;
         //    msg << msgPrefix.str() << "System::Exception: " << Maytag::systemStringToStdString(ex->Message);
         //    LOGERROR(msg.str());
+        //    return TskModule::FAIL;
         //}        
         catch (...)
         {
-            status = TskModule::FAIL;
             LOGERROR(msgPrefix.str() + "unrecognized exception");
+            return TskModule::FAIL;
         }
-
-        return status;
     }
 }

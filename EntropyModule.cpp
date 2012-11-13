@@ -52,18 +52,28 @@
 #include <math.h>
 #include <assert.h>
 
-// Functions and variables other than the module API functions are enclosed in
-// an anonymous namespace to give them file scope instead of global scope. This
-// replaces the older practice of declaring file scope functions and variables
-// using the "static" keyword.
+// More complex modules will likely put functions and variables other than 
+// the module API functions in separate source files and/or may define various
+// C++ classes to perform the work of the module. However, it is possible to simply 
+// enclose such functions and variables in an anonymous namespace to give them file scope 
+// instead of global scope, as is done in this module. This replaces the older practice 
+// of declaring file scope functions and variables using the "static" keyword. An 
+// anonymous namespace is a more flexible construct, since it is possible to define 
+// types within it.
 //
-// More complex modules will likely put additional code in separate source files and
-// may define various classes to perform the work of the module. 
+// NOTE: Linux/OS-X module developers should make sure module functions
+// other than the module API functions are either uniquely named or bound at module link time. 
+// Placing these functions in an anonymous namespace to give them static-linkage is one way to 
+// accomplish this.
 //
-// Note that static data is not likely to be compatible with multithreading, since 
-// each thread will get its own copy of the data.
+// CAVEAT: Static data can be incompatible with multithreading, since each
+// thread will get its own copy of the data.
 namespace
 {
+    const char *MODULE_NAME = "Entropy";
+    const char *MODULE_DESCRIPTION = "Performs an entropy calculation for the contents of a given file";
+    const char *MODULE_VERSION = "1.0.0";
+
     /**
      * Calculates the entropy of a file.
      *
@@ -79,19 +89,21 @@ namespace
         memset(byteCounts, 0, sizeof(long) * 256);
         long totalBytes = 0;
         char buffer[FILE_BUFFER_SIZE];
-        int bytesRead = 0;
+        ssize_t bytesRead = 0;
         do
         {
             memset(buffer, 0, FILE_BUFFER_SIZE);
             bytesRead = pFile->read(buffer, FILE_BUFFER_SIZE);
+			if (bytesRead > 0)
+			{
+				for (int i = 0; i < bytesRead; ++i)
+				{
+					byte = static_cast<unsigned __int8>(buffer[i]);
+					byteCounts[byte]++;
+				}
 
-            for(int i = 0; i < bytesRead; ++i)
-            {
-                byte = buffer[i];
-                byteCounts[byte]++;
-            }
-
-            totalBytes += bytesRead;
+				totalBytes += bytesRead;
+			}
         } 
         while (bytesRead > 0);
 
@@ -114,31 +126,46 @@ extern "C"
     /**
      * Module identification function. 
      *
+	 * CAVEAT: This function is intended to be called by TSK Framework only. 
+	 * Linux/OS-X modules should *not* call this function within the module 
+	 * unless appropriate compiler/linker options are used to bind all 
+	 * library-internal symbols at link time. 
+	 *
      * @return The name of the module.
      */
     TSK_MODULE_EXPORT const char *name()
     {
-        return "Entropy";
+        return MODULE_NAME;
     }
 
     /**
      * Module identification function. 
      *
+	 * CAVEAT: This function is intended to be called by TSK Framework only. 
+	 * Linux/OS-X modules should *not* call this function within the module 
+	 * unless appropriate compiler/linker options are used to bind all 
+	 * library-internal symbols at link time. 
+	 *
      * @return A description of the module.
      */
     TSK_MODULE_EXPORT const char *description()
     {
-        return "Performs an entropy calculation for the contents of a given file";
+        return MODULE_DESCRIPTION;
     }
 
     /**
      * Module identification function. 
      *
+	 * CAVEAT: This function is intended to be called by TSK Framework only. 
+	 * Linux/OS-X modules should *not* call this function within the module 
+	 * unless appropriate compiler/linker options are used to bind all 
+	 * library-internal symbols at link time. 
+	 *
      * @return The version of the module.
      */
     TSK_MODULE_EXPORT const char *version()
     {
-        return "1.0.0";
+        return MODULE_VERSION;
     }
 
     /**
@@ -147,6 +174,11 @@ extern "C"
      * Returns TskModule::OK or TskModule::FAIL. Returning TskModule::FAIL indicates 
      * the module is not in an operational state.  
      *
+	 * CAVEAT: This function is intended to be called by TSK Framework only. 
+	 * Linux/OS-X modules should *not* call this function within the module 
+	 * unless appropriate compiler/linker options are used to bind all 
+	 * library-internal symbols at link time. 
+	 *
      * @param args a string of initialization arguments.
      * @return TskModule::OK if initialization succeeded, otherwise TskModule::FAIL.
      */
@@ -155,7 +187,7 @@ extern "C"
         // The TSK Framework convention is to prefix error messages with the
         // name of the module/class and the function that emitted the message. 
         std::ostringstream msgPrefix;
-        msgPrefix << name() << "::initialize : ";
+        msgPrefix << MODULE_NAME << "::initialize : ";
 
         // Well-behaved modules should catch and log all possible exceptions
         // and return an appropriate TskModule::Status to the TSK Framework. 
@@ -204,22 +236,29 @@ extern "C"
     }
 
     /**
-     * Module execution function. Receives a pointer to a file the module is to
-     * process. The file is represented by a TskFile interface from which both
-     * file content and file metadata can be retrieved. Returns TskModule::OK, 
-     * TskModule::FAIL, or TskModule::STOP. Returning TskModule::FAIL indicates 
-     * the module experienced an error processing the file. Returning TskModule::STOP
-     * is a request to terminate processing of the file.
+     * Module execution function for file analysis modules. 
+	 * Receives a pointer to a file the module is to process. The file is 
+	 * represented by a TskFile interface from which both file content and file 
+	 * metadata can be retrieved. Returns TskModule::OK, TskModule::FAIL, or 
+	 * TskModule::STOP. Returning TskModule::FAIL indicates the module 
+	 * experienced an error processing the file. 
      *
+	 * CAVEAT: This function is intended to be called by TSK Framework only. 
+	 * Linux/OS-X modules should *not* call this function within the module 
+	 * unless appropriate compiler/linker options are used to bind all 
+	 * library-internal symbols at link time. 
+	 *
      * @param pFile A pointer to a file to be processed.
-     * @returns TskModule::OK on success, TskModule::FAIL on error, or TskModule::STOP.
-     */
+     * @returns TskModule::OK on success, TskModule::FAIL on error, or 
+	 * TskModule::STOP. Returning TskModule::STOP is a request to terminate 
+	 * processing of the file.     
+	 */
     TskModule::Status TSK_MODULE_EXPORT run(TskFile *pFile)
     {
         // The TSK Framework convention is to prefix error messages with the
         // name of the module/class and the function that emitted the message. 
         std::ostringstream msgPrefix;
-        msgPrefix << name() << "::run : ";
+        msgPrefix << MODULE_NAME << "::run : ";
 
         // Well-behaved modules should catch and log all possible exceptions
         // and return an appropriate TskModule::Status to the TSK Framework. 
@@ -235,7 +274,7 @@ extern "C"
             double entropy = calculateEntropy(pFile);
 
             // Post the value to the blackboard.
-            pFile->addGenInfoAttribute(TskBlackboardAttribute(TSK_ENTROPY, name(), "", entropy));
+            pFile->addGenInfoAttribute(TskBlackboardAttribute(TSK_ENTROPY, MODULE_NAME, "", entropy));
 
             return TskModule::OK;
         }
@@ -276,10 +315,78 @@ extern "C"
         }
     }
 
+  //  /**
+  //   * Module execution function for post-processing modules. 
+  //   *
+  //   * CAVEAT: This function is intended to be called by TSK Framework only. 
+  //   * Linux/OS-X modules should *not* call this function within the module 
+  //   * unless appropriate compiler/linker options are used to bind all 
+  //   * library-internal symbols at link time. 
+  //   *
+  //   * @returns TskModule::OK on success, TskModule::FAIL on error
+  //   */
+  //  TskModule::Status TSK_MODULE_EXPORT report()
+  //  {
+  //      // The TSK Framework convention is to prefix error messages with the
+  //      // name of the module/class and the function that emitted the message. 
+  //      std::ostringstream msgPrefix;
+  //      msgPrefix << MODULE_NAME << "::report : ";
+  //
+  //      // Well-behaved modules should catch and log all possible exceptions
+  //      // and return an appropriate TskModule::Status to the TSK Framework. 
+  //      try
+  //      {
+  //          // If this module could be used in a post-processing pipeline, the 
+  //	      // code would go here.
+  //
+  //		  return TskModule::OK;
+  //      }
+  //      catch (TskException &ex)
+  //      {
+  //          std::ostringstream msg;
+  //          msg << msgPrefix.str() << "TskException: " << ex.message();
+  //          LOGERROR(msg.str());
+  //          return TskModule::FAIL;
+  //      }
+  //      // Uncomment this catch block and the #include of "Poco/Exception.h" if using Poco.
+  //      //catch (Poco::Exception &ex)
+  //      //{
+  //      //    std::ostringstream msg;
+  //      //    msg << msgPrefix.str() << "Poco::Exception: " << ex.displayText();
+  //      //    LOGERROR(msg.str());
+  //      //    return TskModule::FAIL;
+  //      //}
+  //      catch (std::exception &ex)
+  //      {
+  //          std::ostringstream msg;
+  //          msg << msgPrefix.str() << "std::exception: " << ex.what();
+  //          LOGERROR(msg.str());
+  //          return TskModule::FAIL;
+  //      }
+  //      // Uncomment this catch block and add necessary .NET references if using C++/CLI.
+  //      //catch (System::Exception ^ex)
+  //      //{
+  //      //    std::ostringstream msg;
+  //      //    msg << msgPrefix.str() << "System::Exception: " << Maytag::systemStringToStdString(ex->Message);
+  //      //    LOGERROR(msg.str());
+  //      //    return TskModule::FAIL;
+  //      //}        
+  //      catch (...)
+  //      {
+  //          LOGERROR(msgPrefix.str() + "unrecognized exception");
+  //          return TskModule::FAIL;
+  //      }
+  //  }
+
     /**
      * Module cleanup function. This is where the module should free any resources 
      * allocated during initialization or execution.
      *
+	 * CAVEAT: This function is intended to be called by TSK Framework only. 
+	 * Linux/OS-X modules should *not* call this function within the module 
+	 * unless appropriate compiler/linker options are used to bind all 
+	 * library-internal symbols at link time. 
+	 *
      * @returns TskModule::OK on success and TskModule::FAIL on error.
      */
     TskModule::Status TSK_MODULE_EXPORT finalize()
@@ -287,7 +394,7 @@ extern "C"
         // The TSK Framework convention is to prefix error messages with the
         // name of the module/class and the function that emitted the message. 
         std::ostringstream msgPrefix;
-        msgPrefix << name() << "::finalize : ";
+        msgPrefix << MODULE_NAME << "::finalize : ";
 
         // Well-behaved modules should catch and log all possible exceptions
         // and return an appropriate TskModule::Status to the TSK Framework. 

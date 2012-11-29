@@ -48,6 +48,7 @@
 
 // C/C++ library includes
 #include <string>
+#include <cstring>
 #include <sstream>
 #include <math.h>
 #include <assert.h>

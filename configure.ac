@@ -3,7 +3,7 @@
 
 AC_PREREQ([2.59])
 
-AC_INIT(c_EntropyModule, 4.0.0)
+AC_INIT(c_EntropyModule, 1.0.0)
 AC_CONFIG_SRCDIR([EntropyModule.cpp])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR(config)
@@ -30,7 +30,6 @@ fi
 AC_CHECK_HEADERS([stdlib.h string.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_CHECK_HEADER_STDBOOL
 AC_C_INLINE
 AC_TYPE_INT32_T
 AC_TYPE_INT64_T

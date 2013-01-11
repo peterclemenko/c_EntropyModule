@@ -40,7 +40,7 @@
 */
 
 // TSK Framework includes
-#include "TskModuleDev.h"
+#include "tsk/framework/utilities/TskModuleDev.h"
 
 // Poco includes
 // Uncomment this include if using the Poco catch blocks.
